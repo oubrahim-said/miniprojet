@@ -16,49 +16,52 @@ import com.example.miniprojet.databinding.ActivityAuthBinding
 import kotlinx.coroutines.launch
 
 class AuthActivity : AppCompatActivity() {
-    
+
     private lateinit var binding: ActivityAuthBinding
     private lateinit var googleAuthManager: GoogleAuthManager
-    
+
     private val signInLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         binding.progressBar.visibility = View.VISIBLE
         val task = com.google.android.gms.auth.api.signin.GoogleSignIn.getSignedInAccountFromIntent(result.data)
-        
+
         lifecycleScope.launch {
             val authResult = googleAuthManager.handleSignInResult(task)
-            
+
             binding.progressBar.visibility = View.GONE
-            
+
             if (authResult.isSuccess) {
                 Toast.makeText(this@AuthActivity, getString(R.string.auth_success), Toast.LENGTH_SHORT).show()
-                navigateToMainActivity()
+                // Add a small delay before navigation to ensure everything is properly initialized
+                Handler(Looper.getMainLooper()).postDelayed({
+                    navigateToMainActivity()
+                }, 500) // 500ms delay
             } else {
                 Toast.makeText(this@AuthActivity, getString(R.string.auth_failed), Toast.LENGTH_SHORT).show()
             }
         }
     }
-    
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAuthBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        
+
         googleAuthManager = GoogleAuthManager(this)
-        
+
         // Check if user is already signed in
         val account = googleAuthManager.getLastSignedInAccount()
         if (account != null) {
             navigateToMainActivity()
             return
         }
-        
+
         binding.btnSignIn.setOnClickListener {
             signIn()
         }
     }
-    
+
     private fun signIn() {
         binding.progressBar.visibility = View.VISIBLE
         val signInIntent = googleAuthManager.getSignInIntent()
@@ -66,11 +69,14 @@ class AuthActivity : AppCompatActivity() {
     }
 
     private fun navigateToMainActivity() {
-        val intent = Intent(this, MainActivity::class.java)
-        // Add proper flags to handle the activity stack
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-        startActivity(intent)
-        // Add a small delay before finishing
-        Thread.sleep(30000)// 300ms delay
+        try {
+            val intent = Intent(this, MainActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            startActivity(intent)
+            finish()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(this, "Error navigating to main activity", Toast.LENGTH_SHORT).show()
+        }
     }
 }

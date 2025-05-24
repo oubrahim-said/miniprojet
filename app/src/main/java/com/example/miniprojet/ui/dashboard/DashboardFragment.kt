@@ -16,7 +16,7 @@ class DashboardFragment : Fragment() {
 
     private var _binding: FragmentDashboardBinding? = null
     private val binding get() = _binding!!
-    
+
     private lateinit var viewModel: DashboardViewModel
     private lateinit var courseAdapter: CourseAdapter
     private lateinit var announcementAdapter: AnnouncementAdapter
@@ -33,23 +33,33 @@ class DashboardFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        
-        // Initialize auth manager
-        googleAuthManager = GoogleAuthManager(requireContext())
-        
-        // Initialize view model
-        viewModel = ViewModelProvider(this)[DashboardViewModel::class.java]
-        
-        // Set up recycler views
-        setupRecyclerViews()
-        
-        // Observe data
-        observeData()
-        
-        // Load data
-        loadData()
+
+        try {
+            // Initialize auth manager
+            googleAuthManager = GoogleAuthManager(requireContext())
+
+            // Initialize view model
+            viewModel = ViewModelProvider(this)[DashboardViewModel::class.java]
+
+            // Set up recycler views
+            setupRecyclerViews()
+
+            // Observe data
+            observeData()
+
+            // Load data
+            loadData()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            // Set a basic welcome message if initialization fails
+            try {
+                binding.tvWelcome.text = "Welcome to Smart Student Hub!"
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }
     }
-    
+
     private fun setupRecyclerViews() {
         // Set up courses recycler view
         courseAdapter = CourseAdapter()
@@ -57,7 +67,7 @@ class DashboardFragment : Fragment() {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = courseAdapter
         }
-        
+
         // Set up announcements recycler view
         announcementAdapter = AnnouncementAdapter()
         binding.rvRecentAnnouncements.apply {
@@ -65,26 +75,26 @@ class DashboardFragment : Fragment() {
             adapter = announcementAdapter
         }
     }
-    
+
     private fun observeData() {
         // Observe upcoming courses
         viewModel.upcomingCourses.observe(viewLifecycleOwner) { courses ->
             courseAdapter.submitList(courses)
         }
-        
+
         // Observe recent announcements
         viewModel.recentAnnouncements.observe(viewLifecycleOwner) { announcements ->
             announcementAdapter.submitList(announcements)
         }
     }
-    
+
     private fun loadData() {
         // Get current user
         val account = googleAuthManager.getLastSignedInAccount()
         if (account != null) {
             // Update welcome message
             binding.tvWelcome.text = "Welcome, ${account.givenName}!"
-            
+
             // Load data from repositories
             viewModel.loadData(account.id ?: "")
         }
