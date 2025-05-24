@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- Material Design Default Colors -->
+    <color name="design_default_color_error">#B00020</color>
+    <color name="design_default_color_secondary">#03DAC6</color>
+    <color name="design_default_color_primary">#6200EE</color>
+</resources>

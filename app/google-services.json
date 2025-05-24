@@ -1,0 +1,38 @@
+{
+  "project_info": {
+    "project_number": "791543070239",
+    "project_id": "miniprojet-fdd24",
+    "storage_bucket": "miniprojet-fdd24.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:791543070239:android:ab89f10097d66aafad9f2a",
+        "android_client_info": {
+          "package_name": "com.example.miniprojet"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "791543070239-4gfh1k2ljhtema5kbkutcq3pc3ihs1i4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.miniprojet",
+            "certificate_hash": "bec0d872eeb2f282e77f11a328c987cb9f23030c"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5_5shOWNMGaxIHoT4NoeleIdFF2gcRPE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

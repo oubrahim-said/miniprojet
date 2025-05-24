@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/nav_dashboard">
+
+    <fragment
+        android:id="@+id/nav_dashboard"
+        android:name="com.example.miniprojet.ui.dashboard.DashboardFragment"
+        android:label="@string/nav_dashboard"
+        tools:layout="@layout/fragment_dashboard" />
+
+    <fragment
+        android:id="@+id/nav_courses"
+        android:name="com.example.miniprojet.ui.courses.CoursesFragment"
+        android:label="@string/nav_courses"
+        tools:layout="@layout/fragment_courses">
+        <action
+            android:id="@+id/action_nav_courses_to_courseDetailFragment"
+            app:destination="@id/courseDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_announcements"
+        android:name="com.example.miniprojet.ui.announcements.AnnouncementsFragment"
+        android:label="@string/nav_announcements"
+        tools:layout="@layout/fragment_announcements">
+        <action
+            android:id="@+id/action_nav_announcements_to_announcementDetailFragment"
+            app:destination="@id/announcementDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_documents"
+        android:name="com.example.miniprojet.ui.documents.DocumentsFragment"
+        android:label="@string/nav_documents"
+        tools:layout="@layout/fragment_documents" />
+
+    <fragment
+        android:id="@+id/nav_profile"
+        android:name="com.example.miniprojet.ui.profile.ProfileFragment"
+        android:label="@string/nav_profile"
+        tools:layout="@layout/fragment_profile" />
+
+    <fragment
+        android:id="@+id/nav_settings"
+        android:name="com.example.miniprojet.ui.settings.SettingsFragment"
+        android:label="@string/nav_settings"
+        tools:layout="@layout/fragment_settings" />
+
+    <fragment
+        android:id="@+id/courseDetailFragment"
+        android:name="com.example.miniprojet.ui.courses.CourseDetailFragment"
+        android:label="@string/course_details"
+        tools:layout="@layout/fragment_course_detail">
+        <argument
+            android:name="courseId"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/announcementDetailFragment"
+        android:name="com.example.miniprojet.ui.announcements.AnnouncementDetailFragment"
+        android:label="@string/announcement_details"
+        tools:layout="@layout/fragment_announcement_detail">
+        <argument
+            android:name="announcementId"
+            app:argType="string" />
+    </fragment>
+</navigation>
