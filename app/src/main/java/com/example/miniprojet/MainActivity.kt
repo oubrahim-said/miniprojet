@@ -17,10 +17,17 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.activity.OnBackPressedCallback
+import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.example.miniprojet.auth.GoogleAuthManager
 import com.example.miniprojet.databinding.ActivityMainBinding
+import com.example.miniprojet.ui.announcements.AnnouncementsFragment
 import com.example.miniprojet.ui.auth.AuthActivity
+import com.example.miniprojet.ui.courses.CoursesFragment
+import com.example.miniprojet.ui.dashboard.DashboardFragment
+import com.example.miniprojet.ui.documents.DocumentsFragment
+import com.example.miniprojet.ui.profile.ProfileFragment
+import com.example.miniprojet.ui.settings.SettingsFragment
 import com.google.android.material.navigation.NavigationView
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -81,10 +88,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             val drawerLayout: DrawerLayout = binding.drawerLayout
             val navView: NavigationView = binding.navView
 
-            // Find the NavController
-            navController = findNavController(R.id.nav_host_fragment)
-
-            // Configure the navigation drawer
+            // Configure the navigation drawer for manual navigation
             appBarConfiguration = AppBarConfiguration(
                 setOf(
                     R.id.nav_dashboard, R.id.nav_courses, R.id.nav_announcements,
@@ -92,14 +96,20 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 ), drawerLayout
             )
 
-            // Set up the ActionBar with the NavController
-            setupActionBarWithNavController(navController, appBarConfiguration)
-            navView.setupWithNavController(navController)
+            // Set up custom navigation listener (not using Navigation Component)
             navView.setNavigationItemSelectedListener(this)
+
+            // Set the initial fragment to Dashboard
+            changefragment(DashboardFragment())
+
+            // Set the checked item to dashboard
+            navView.setCheckedItem(R.id.nav_dashboard)
+
+            println("Navigation setup completed successfully")
 
         } catch (e: Exception) {
             e.printStackTrace()
-            // If navigation setup fails, we can still continue without it
+            println("Navigation setup failed: ${e.message}")
         }
     }
 
@@ -170,37 +180,43 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         try {
+            println("Navigation item selected: ${item.title} (ID: ${item.itemId})")
+
             // Handle navigation view item clicks
             when (item.itemId) {
                 R.id.nav_dashboard -> {
-                    if (::navController.isInitialized) {
-                        navController.navigate(R.id.nav_dashboard)
-                    }
+                    println("Navigating to Dashboard")
+                    changefragment(DashboardFragment())
+                    binding.navView.setCheckedItem(R.id.nav_dashboard)
                 }
                 R.id.nav_courses -> {
-                    if (::navController.isInitialized) {
-                        navController.navigate(R.id.nav_courses)
-                    }
+                    println("Navigating to Courses")
+                    changefragment(CoursesFragment())
+                    binding.navView.setCheckedItem(R.id.nav_courses)
                 }
                 R.id.nav_announcements -> {
-                    if (::navController.isInitialized) {
-                        navController.navigate(R.id.nav_announcements)
-                    }
+                    println("Navigating to Announcements")
+                    changefragment(AnnouncementsFragment())
+                    binding.navView.setCheckedItem(R.id.nav_announcements)
                 }
                 R.id.nav_documents -> {
-                    if (::navController.isInitialized) {
-                        navController.navigate(R.id.nav_documents)
-                    }
+                    println("Navigating to Documents")
+                    changefragment(DocumentsFragment())
+                    binding.navView.setCheckedItem(R.id.nav_documents)
                 }
                 R.id.nav_profile -> {
-                    if (::navController.isInitialized) {
-                        navController.navigate(R.id.nav_profile)
-                    }
+                    println("Navigating to Profile")
+                    changefragment(ProfileFragment())
+                    binding.navView.setCheckedItem(R.id.nav_profile)
                 }
                 R.id.nav_settings -> {
-                    if (::navController.isInitialized) {
-                        navController.navigate(R.id.nav_settings)
-                    }
+                    println("Navigating to Settings")
+                    changefragment(SettingsFragment())
+                    binding.navView.setCheckedItem(R.id.nav_settings)
+                }
+                else -> {
+                    println("Unknown navigation item: ${item.itemId}")
+                    return false
                 }
             }
 
@@ -208,6 +224,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             binding.drawerLayout.closeDrawer(GravityCompat.START)
         } catch (e: Exception) {
             e.printStackTrace()
+            println("Error in onNavigationItemSelected: ${e.message}")
             // If navigation fails, just close the drawer
             try {
                 binding.drawerLayout.closeDrawer(GravityCompat.START)
@@ -219,7 +236,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+        // Handle up navigation manually since we're not using Navigation Component
+        if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
+            return true
+        }
+        return super.onSupportNavigateUp()
     }
 
     // Using the new OnBackPressedCallback approach instead of deprecated onBackPressed()
@@ -234,5 +256,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
             }
         })
+    }
+
+    private fun changefragment(fragment: Fragment) {
+        try {
+            val transaction = supportFragmentManager.beginTransaction()
+            transaction.replace(R.id.nav_host_fragment, fragment)
+            // Only add to back stack if it's not the dashboard (home) fragment
+            if (fragment !is DashboardFragment) {
+                transaction.addToBackStack(null)
+            }
+            transaction.commit()
+            println("Fragment changed successfully to: ${fragment::class.java.simpleName}")
+        } catch (e: Exception) {
+            e.printStackTrace()
+            println("Error changing fragment: ${e.message}")
+        }
     }
 }
